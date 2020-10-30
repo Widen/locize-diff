@@ -2,8 +2,10 @@ import { getInput, setFailed } from '@actions/core'
 import { context } from '@actions/github'
 
 async function main() {
-  // Don't run the action on draft PRs
-  if (context.payload.pull_request?.draft) {
+  if (
+    getInput('includeDrafts') !== 'true' &&
+    context.payload.pull_request?.draft
+  ) {
     return
   }
 

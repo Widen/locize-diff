@@ -1,10 +1,10 @@
-name: "Locize Diff"
-description: "Displays a diff of translations for two Locize versions."
+name: 'Locize Diff'
+description: 'Displays a diff of translations for two Locize versions.'
 runs:
-  using: "node12"
-  main: "lib/index.js"
+  using: 'node12'
+  main: 'dist/index.js'
 inputs:
   milliseconds:
-    description: "number of milliseconds to wait"
+    description: 'number of milliseconds to wait'
     required: true
-    default: "1000"
+    default: '1000'

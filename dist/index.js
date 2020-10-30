@@ -857,6 +857,10 @@ function main() {
             return;
         }
         try {
+            console.log(Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('projectId'));
+            console.log(Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('leftVersion'));
+            console.log(Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('rightVersion'));
+            console.log(Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('ignoreDeletedKeys'));
             // const octokit = new GitHub(getInput('token'))
             // const [changelogMissing, comment] = await Promise.all([
             //   await isChangelogMissing(),

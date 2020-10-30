@@ -4,7 +4,15 @@ runs:
   using: 'node12'
   main: 'dist/index.js'
 inputs:
-  milliseconds:
-    description: 'number of milliseconds to wait'
+  projectId:
+    description: 'Locize project id'
     required: true
-    default: '1000'
+  leftVersion:
+    description: 'Locize version to use as the left side of the comparision.'
+    default: 'latest'
+  rightVersion:
+    description: 'Locize version to use as the right side of the comparison.'
+    default: 'production'
+  ignoreDeletedKeys:
+    description: 'When true, will ignore deleted keys in the comparison.'
+    default: true

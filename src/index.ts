@@ -1,4 +1,4 @@
-import { setFailed } from '@actions/core'
+import { getInput, setFailed } from '@actions/core'
 import { context } from '@actions/github'
 
 async function main() {
@@ -8,6 +8,11 @@ async function main() {
   }
 
   try {
+    console.log(getInput('projectId'))
+    console.log(getInput('leftVersion'))
+    console.log(getInput('rightVersion'))
+    console.log(getInput('ignoreDeletedKeys'))
+
     // const octokit = new GitHub(getInput('token'))
     // const [changelogMissing, comment] = await Promise.all([
     //   await isChangelogMissing(),

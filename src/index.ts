@@ -1,21 +1,26 @@
 import { getInput, setFailed } from '@actions/core'
-import { context } from '@actions/github'
+import { context, getOctokit } from '@actions/github'
+import { listResources } from './api'
 
 async function main() {
-  if (
-    getInput('includeDrafts') !== 'true' &&
-    context.payload.pull_request?.draft
-  ) {
+  const projectId = getInput('projectId')
+  const leftVersion = getInput('leftVersion')
+  const rightVersion = getInput('rightVersion')
+  const ignoreDeletedKeys = getInput('ignoreDeletedKeys') === 'true'
+  const includeDrafts = getInput('includeDrafts') !== 'true'
+
+  if (includeDrafts && context.payload.pull_request?.draft) {
     return
   }
 
   try {
-    console.log(getInput('projectId'))
-    console.log(getInput('leftVersion'))
-    console.log(getInput('rightVersion'))
-    console.log(getInput('ignoreDeletedKeys'))
+    const octokit = getOctokit(getInput('token'))
+    const left = await listResources(projectId, leftVersion)
+    const right = await listResources(projectId, rightVersion)
 
-    // const octokit = new GitHub(getInput('token'))
+    console.log(left)
+    console.log(right)
+
     // const [changelogMissing, comment] = await Promise.all([
     //   await isChangelogMissing(),
     //   await getComment(),
@@ -27,9 +32,8 @@ async function main() {
     //     issue_number: context.issue.number,
     //   })
     // }
-    // // If the comment exists and the changelog is not missing then the user
-    // // must have pushed a commit to add the changelog entry. When this happens
-    // // we can hide the now outdated comment.
+    // If the comment exists and there are no longer any diffs, we minimize the
+    // comment so it no longer shows in the GitHub UI.
     // if (comment && !changelogMissing) {
     //   await minimizeComment(comment.node_id)
     // }

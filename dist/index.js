@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(325);
+/******/ 		return __webpack_require__(946);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -825,66 +825,6 @@ paginateRest.VERSION = VERSION;
 
 exports.paginateRest = paginateRest;
 //# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
-/***/ 325:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(470);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(469);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-
-function main() {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        if (Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('includeDrafts') !== 'true' && ((_a = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.draft)) {
-            return;
-        }
-        try {
-            console.log(Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('projectId'));
-            console.log(Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('leftVersion'));
-            console.log(Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('rightVersion'));
-            console.log(Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('ignoreDeletedKeys'));
-            // const octokit = new GitHub(getInput('token'))
-            // const [changelogMissing, comment] = await Promise.all([
-            //   await isChangelogMissing(),
-            //   await getComment(),
-            // ])
-            // if (changelogMissing && !comment) {
-            //   await octokit.issues.createComment({
-            //     ...context.repo,
-            //     body: getInput('message'),
-            //     issue_number: context.issue.number,
-            //   })
-            // }
-            // // If the comment exists and the changelog is not missing then the user
-            // // must have pushed a commit to add the changelog entry. When this happens
-            // // we can hide the now outdated comment.
-            // if (comment && !changelogMissing) {
-            //   await minimizeComment(comment.node_id)
-            // }
-        }
-        catch (err) {
-            Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)(err.message);
-        }
-    });
-}
-main();
 
 
 /***/ }),
@@ -5977,6 +5917,107 @@ exports.withCustomRequest = withCustomRequest;
 
 /***/ }),
 
+/***/ 946:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __webpack_require__(470);
+
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __webpack_require__(469);
+
+// EXTERNAL MODULE: ./node_modules/@actions/http-client/index.js
+var http_client = __webpack_require__(539);
+
+// CONCATENATED MODULE: ./src/api.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+const client = new http_client.HttpClient();
+function getJSON(url) {
+    return client
+        .get(url)
+        .then((res) => res.readBody())
+        .then((res) => JSON.parse(res));
+}
+function listResources(projectId, version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return getJSON(`https://api.locize.app/download/${projectId}/${version}`);
+    });
+}
+function fetchResource(projectId, version, language, namespace) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return getJSON(`https://api.locize.app/${projectId}/${version}/${language}/${namespace}`);
+    });
+}
+
+// CONCATENATED MODULE: ./src/index.ts
+var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+
+function main() {
+    var _a;
+    return src_awaiter(this, void 0, void 0, function* () {
+        const projectId = Object(core.getInput)('projectId');
+        const leftVersion = Object(core.getInput)('leftVersion');
+        const rightVersion = Object(core.getInput)('rightVersion');
+        const ignoreDeletedKeys = Object(core.getInput)('ignoreDeletedKeys') === 'true';
+        const includeDrafts = Object(core.getInput)('includeDrafts') !== 'true';
+        if (includeDrafts && ((_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.draft)) {
+            return;
+        }
+        try {
+            const octokit = Object(github.getOctokit)(Object(core.getInput)('token'));
+            const left = yield listResources(projectId, leftVersion);
+            const right = yield listResources(projectId, rightVersion);
+            console.log(left);
+            console.log(right);
+            // const [changelogMissing, comment] = await Promise.all([
+            //   await isChangelogMissing(),
+            //   await getComment(),
+            // ])
+            // if (changelogMissing && !comment) {
+            //   await octokit.issues.createComment({
+            //     ...context.repo,
+            //     body: getInput('message'),
+            //     issue_number: context.issue.number,
+            //   })
+            // }
+            // If the comment exists and there are no longer any diffs, we minimize the
+            // comment so it no longer shows in the GitHub UI.
+            // if (comment && !changelogMissing) {
+            //   await minimizeComment(comment.node_id)
+            // }
+        }
+        catch (err) {
+            Object(core.setFailed)(err.message);
+        }
+    });
+}
+main();
+
+
+/***/ }),
+
 /***/ 950:
 /***/ (function(__unusedmodule, exports) {
 
@@ -6057,6 +6098,36 @@ exports.checkBypass = checkBypass;
 /******/ 		};
 /******/ 	}();
 /******/ 	
+/******/ 	/* webpack/runtime/define property getter */
+/******/ 	!function() {
+/******/ 		// define getter function for harmony exports
+/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
+/******/ 		__webpack_require__.d = function(exports, name, getter) {
+/******/ 			if(!hasOwnProperty.call(exports, name)) {
+/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/create fake namespace object */
+/******/ 	!function() {
+/******/ 		// create a fake namespace object
+/******/ 		// mode & 1: value is a module id, require it
+/******/ 		// mode & 2: merge all properties of value into the ns
+/******/ 		// mode & 4: return value when already ns object
+/******/ 		// mode & 8|1: behave like require
+/******/ 		__webpack_require__.t = function(value, mode) {
+/******/ 			if(mode & 1) value = this(value);
+/******/ 			if(mode & 8) return value;
+/******/ 			if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 			var ns = Object.create(null);
+/******/ 			__webpack_require__.r(ns);
+/******/ 			Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 			if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 			return ns;
+/******/ 		};
+/******/ 	}();
+/******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	!function() {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
@@ -6066,17 +6137,6 @@ exports.checkBypass = checkBypass;
 /******/ 				function getModuleExports() { return module; };
 /******/ 			__webpack_require__.d(getter, 'a', getter);
 /******/ 			return getter;
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getter */
-/******/ 	!function() {
-/******/ 		// define getter function for harmony exports
-/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
-/******/ 		__webpack_require__.d = function(exports, name, getter) {
-/******/ 			if(!hasOwnProperty.call(exports, name)) {
-/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 			}
 /******/ 		};
 /******/ 	}();
 /******/ 	

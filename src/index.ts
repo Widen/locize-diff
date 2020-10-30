@@ -1,12 +1,12 @@
 import { getInput, setFailed } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
-import { listResources } from './api'
+import { diffResources } from './diff'
+import { collectResources } from './utils'
 
 async function main() {
   const projectId = getInput('projectId')
   const leftVersion = getInput('leftVersion')
   const rightVersion = getInput('rightVersion')
-  const ignoreDeletedKeys = getInput('ignoreDeletedKeys') === 'true'
   const includeDrafts = getInput('includeDrafts') !== 'true'
 
   if (includeDrafts && context.payload.pull_request?.draft) {
@@ -15,11 +15,11 @@ async function main() {
 
   try {
     const octokit = getOctokit(getInput('token'))
-    const left = await listResources(projectId, leftVersion)
-    const right = await listResources(projectId, rightVersion)
+    const left = await collectResources(projectId, leftVersion)
+    const right = await collectResources(projectId, rightVersion)
+    const diff = diffResources(left, right)
 
-    console.log(left)
-    console.log(right)
+    console.log(diff)
 
     // const [changelogMissing, comment] = await Promise.all([
     //   await isChangelogMissing(),

@@ -2,7 +2,7 @@ import { HttpClient } from '@actions/http-client'
 
 const client = new HttpClient()
 
-function getJSON(url: string) {
+export function getJSON<T>(url: string): Promise<T> {
   return client
     .get(url)
     .then((res) => res.readBody())
@@ -21,15 +21,4 @@ export async function listResources(
   version: string
 ): Promise<ListResourcesResponse[]> {
   return getJSON(`https://api.locize.app/download/${projectId}/${version}`)
-}
-
-export async function fetchResource(
-  projectId: string,
-  version: string,
-  language: string,
-  namespace: string
-): Promise<Record<string, string>> {
-  return getJSON(
-    `https://api.locize.app/${projectId}/${version}/${language}/${namespace}`
-  )
 }

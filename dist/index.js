@@ -852,8 +852,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 function main() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        // Don't run the action on draft PRs
-        if ((_a = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.draft) {
+        if (Object(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('includeDrafts') !== 'true' && ((_a = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.draft)) {
             return;
         }
         try {

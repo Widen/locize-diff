@@ -1,7 +1,7 @@
 import { getInput } from '@actions/core'
 import { ResourceCollection } from './types'
 
-interface ResourceDiff {
+export interface ResourceDiff {
   key: string
   diffs: Record<string, { left: string; right: string }>
 }

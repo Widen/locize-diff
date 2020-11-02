@@ -1408,11 +1408,11 @@ function getComment() {
 // CONCATENATED MODULE: ./src/diff.ts
 
 function getKeys(left, right) {
-    const keys = Object.keys(right.resources);
-    // When including deleted keys, we need to also include the keys from the left
-    // side of the comparison. Otherwise, we only include keys from the right side.
+    const keys = Object.keys(left.resources);
+    // When including deleted keys, we need to also include the keys from the right
+    // side of the comparison. Otherwise, we only include keys from the left side.
     if (Object(core.getInput)('ignoreDeletedKeys') !== 'true') {
-        keys.push(...Object.keys(left.resources));
+        keys.push(...Object.keys(right.resources));
     }
     return keys;
 }
@@ -1523,7 +1523,9 @@ function main() {
             if (diffs.length) {
                 const req = Object.assign(Object.assign({}, github.context.repo), { body: createMessage(diffs), issue_number: github.context.issue.number });
                 if (comment) {
-                    yield octokit.issues.updateComment(Object.assign(Object.assign({}, req), { comment_id: comment.id }));
+                    if (comment.body !== req.body) {
+                        yield octokit.issues.updateComment(Object.assign(Object.assign({}, req), { comment_id: comment.id }));
+                    }
                 }
                 else {
                     yield octokit.issues.createComment(req);

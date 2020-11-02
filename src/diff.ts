@@ -7,12 +7,12 @@ export interface ResourceDiff {
 }
 
 function getKeys(left: ResourceCollection, right: ResourceCollection) {
-  const keys = Object.keys(right.resources)
+  const keys = Object.keys(left.resources)
 
-  // When including deleted keys, we need to also include the keys from the left
-  // side of the comparison. Otherwise, we only include keys from the right side.
+  // When including deleted keys, we need to also include the keys from the right
+  // side of the comparison. Otherwise, we only include keys from the left side.
   if (getInput('ignoreDeletedKeys') !== 'true') {
-    keys.push(...Object.keys(left.resources))
+    keys.push(...Object.keys(right.resources))
   }
 
   return keys

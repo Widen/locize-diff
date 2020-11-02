@@ -30,7 +30,9 @@ async function main() {
       }
 
       if (comment) {
-        await octokit.issues.updateComment({ ...req, comment_id: comment.id })
+        if (comment.body !== req.body) {
+          await octokit.issues.updateComment({ ...req, comment_id: comment.id })
+        }
       } else {
         await octokit.issues.createComment(req)
       }

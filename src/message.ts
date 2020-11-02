@@ -7,12 +7,8 @@ export const credits =
 const leftVersion = getInput('leftVersion')
 const rightVersion = getInput('rightVersion')
 
-function cleanValue(value = '') {
-  return value.trim() || '_No value_'
-}
-
 function createDiffRow([key, value]: [string, ResourceDiff['diffs'][number]]) {
-  return `| ${key} | ${cleanValue(value.left)} | ${cleanValue(value.right)} |`
+  return `| \`${key}\` | ${value.left || ''} | ${value.right || ''} |`
 }
 
 function createDiffMessage(diff: ResourceDiff) {
@@ -21,7 +17,7 @@ function createDiffMessage(diff: ResourceDiff) {
     .map(createDiffRow)
     .join('\n')
 
-  return `## \`${diff.key}\`
+  return `### \`${diff.key}\`
 
 | Key | \`${leftVersion}\` | \`${rightVersion}\` |
 | --- | --- | --- |

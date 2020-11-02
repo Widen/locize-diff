@@ -1362,7 +1362,7 @@ ${rows}`;
 }
 function createMessage(diffs) {
     const link = projectSlug
-        ? `[Click here](https://locize.app/p/${projectSlug}/settings) to go to your project settings to publish your changes.`
+        ? ` [Click here](https://locize.app/p/${projectSlug}/settings) to go to your project settings to publish your changes.`
         : '';
     return `Heads up! Looks like there are some differences between your two Locize versions.${link}
 

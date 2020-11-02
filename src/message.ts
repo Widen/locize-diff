@@ -7,7 +7,7 @@ export const credits =
 const leftVersion = getInput('leftVersion')
 const rightVersion = getInput('rightVersion')
 
-function cleanValue(value: string) {
+function cleanValue(value = '') {
   return value.trim() || '_No value_'
 }
 

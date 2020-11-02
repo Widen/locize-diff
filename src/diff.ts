@@ -3,7 +3,7 @@ import { ResourceCollection } from './types'
 
 export interface ResourceDiff {
   key: string
-  diffs: Record<string, { left: string; right: string }>
+  diffs: Record<string, { left?: string; right?: string }>
 }
 
 function getKeys(left: ResourceCollection, right: ResourceCollection) {

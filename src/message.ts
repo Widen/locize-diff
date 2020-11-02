@@ -8,7 +8,6 @@ const leftVersion = getInput('leftVersion')
 const rightVersion = getInput('rightVersion')
 
 function cleanValue(value: string) {
-  console.log(value)
   return value.trim() || '_No value_'
 }
 
@@ -17,9 +16,7 @@ function createDiffRow([key, value]: [string, ResourceDiff['diffs'][number]]) {
 }
 
 function createDiffMessage(diff: ResourceDiff) {
-  console.log(diff)
-
-  const rows = Object.entries(diff)
+  const rows = Object.entries(diff.diffs)
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(createDiffRow)
     .join('\n')

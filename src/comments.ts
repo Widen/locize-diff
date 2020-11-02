@@ -1,5 +1,6 @@
 import { getInput } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
+import { credits } from './message'
 
 const octokit = getOctokit(getInput('token'))
 
@@ -22,8 +23,5 @@ export async function getComment() {
     issue_number: context.payload.pull_request!.number,
   })
 
-  return comments.find(({ body }) => {
-    console.log(body)
-    return body.includes('Heads up!')
-  })
+  return comments.find(({ body }) => body.includes(credits))
 }

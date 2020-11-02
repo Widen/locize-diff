@@ -1353,6 +1353,7 @@ function createDiffRow([key, value]) {
     return `| ${key} | ${cleanValue(value.left)} | ${cleanValue(value.right)} |`;
 }
 function createDiffMessage(diff) {
+    console.log(diff);
     const rows = Object.entries(diff)
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map(createDiffRow)

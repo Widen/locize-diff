@@ -17,6 +17,8 @@ function createDiffRow([key, value]: [string, ResourceDiff['diffs'][number]]) {
 }
 
 function createDiffMessage(diff: ResourceDiff) {
+  console.log(diff)
+
   const rows = Object.entries(diff)
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(createDiffRow)

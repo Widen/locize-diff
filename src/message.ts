@@ -6,6 +6,7 @@ export const credits =
 
 const leftVersion = getInput('leftVersion')
 const rightVersion = getInput('rightVersion')
+const projectSlug = getInput('projectSlug')
 
 function createDiffRow([key, value]: [string, ResourceDiff['diffs'][number]]) {
   return `| \`${key}\` | ${value.left || ''} | ${value.right || ''} |`
@@ -25,7 +26,11 @@ ${rows}`
 }
 
 export function createMessage(diffs: ResourceDiff[]) {
-  return `Heads up! Looks like there are some differences between your two Locize versions.
+  const link = projectSlug
+    ? `[Click here](https://locize.app/p/${projectSlug}/settings) to go to your project settings to publish your changes.`
+    : ''
+
+  return `Heads up! Looks like there are some differences between your two Locize versions.${link}
 
 ${diffs.map(createDiffMessage).join('\n\n')}
 

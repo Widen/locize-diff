@@ -6,7 +6,11 @@ GitHub Action to display a diff of translations for two Locize versions.
 
 ### `projectId`
 
-Locize project id. You can find your `projectId` in your project settings under the **Api Keys** tab.
+Locize project id. You can find your `projectId` in your project settings under the **Api Keys** tab. **Required**
+
+### `projectSlug`
+
+Locize project slug. Used to provide a quick link in the comment to navigate directly to the project settings for quick publishing.
 
 ### `leftVersion`
 
@@ -42,6 +46,7 @@ steps:
   - uses: Widen/locize-diff@v1
     with:
       projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
+      projectSlug: maj9dez2
 ```
 
 Custom versions:

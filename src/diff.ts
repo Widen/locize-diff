@@ -40,8 +40,10 @@ export function diffResources(
   left: ResourceCollection[],
   right: ResourceCollection[]
 ): ResourceDiff[] {
-  return left.map((leftItem) =>
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    diffCollection(leftItem, right.find((item) => leftItem.key === item.key)!)
-  )
+  return left
+    .map((leftItem) =>
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      diffCollection(leftItem, right.find((item) => leftItem.key === item.key)!)
+    )
+    .filter((diff) => Object.keys(diff.diffs).length)
 }

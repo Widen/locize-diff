@@ -1,7 +1,8 @@
 import { getInput, setFailed } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
-import { createMessage } from './comments'
+import { getComment, minimizeComment } from './comments'
 import { diffResources } from './diff'
+import { createMessage } from './message'
 import { collectResources } from './utils'
 
 async function main() {
@@ -19,26 +20,27 @@ async function main() {
     const left = await collectResources(projectId, leftVersion)
     const right = await collectResources(projectId, rightVersion)
     const diffs = diffResources(left, right)
+    const comment = await getComment()
 
-    // const [changelogMissing, comment] = await Promise.all([
-    //   await isChangelogMissing(),
-    //   await getComment(),
-    // ])
-
-    // TODO: Only add when necessary
-    if (true) {
-      await octokit.issues.createComment({
+    if (diffs.length) {
+      const req = {
         ...context.repo,
         body: createMessage(diffs),
         issue_number: context.issue.number,
-      })
+      }
+
+      if (comment) {
+        await octokit.issues.updateComment({ ...req, comment_id: comment.id })
+      } else {
+        await octokit.issues.createComment(req)
+      }
     }
 
     // If the comment exists and there are no longer any diffs, we minimize the
     // comment so it no longer shows in the GitHub UI.
-    // if (comment && !changelogMissing) {
-    //   await minimizeComment(comment.node_id)
-    // }
+    if (comment && !diffs.length) {
+      await minimizeComment(comment.node_id)
+    }
   } catch (err) {
     setFailed(err.message)
   }

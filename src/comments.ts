@@ -1,13 +1,29 @@
-import { ResourceDiff } from './diff'
+import { getInput } from '@actions/core'
+import { context, getOctokit } from '@actions/github'
 
-export function createMessage(diffs: ResourceDiff[]): string {
-  return 'Here are the diffs'
+const octokit = getOctokit(getInput('token'))
 
-  // ## `en-US/translation`
+const query = `
+mutation($subjectId: ID!) {
+  minimizeComment(input: { subjectId: $subjectId, classifier: RESOLVED }) {
+    clientMutationId
+  }
+}
+`
 
-  // | Key | `latest` | `production` |
-  // | --- | --- | --- |
-  // | accept | Accept | Accepted |
-  // | product-history | Product History | Product history |
-  // | product-history | Product History | _No value_ |
+export async function minimizeComment(id: string) {
+  await octokit.graphql(query, { subjectId: id })
+}
+
+export async function getComment() {
+  const { data: comments } = await octokit.issues.listComments({
+    ...context.repo,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    issue_number: context.payload.pull_request!.number,
+  })
+
+  return comments.find(({ body }) => {
+    console.log(body)
+    return body.includes('Heads up!')
+  })
 }

@@ -6,7 +6,6 @@ export async function collectResources(
   version: string
 ): Promise<ResourceCollection[]> {
   const resources = await listResources(projectId, version)
-  console.log(resources)
   const promises = resources.map(async (resource) => {
     const [language, namespace] = resource.url.split('/').slice(-2)
     const url = resource.url.replace(projectId, `pull/${projectId}`)

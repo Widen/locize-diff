@@ -1550,7 +1550,6 @@ var utils_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _ar
 function collectResources(projectId, version) {
     return utils_awaiter(this, void 0, void 0, function* () {
         const resources = yield listResources(projectId, version);
-        console.log(resources);
         const promises = resources.map((resource) => utils_awaiter(this, void 0, void 0, function* () {
             const [language, namespace] = resource.url.split('/').slice(-2);
             const url = resource.url.replace(projectId, `pull/${projectId}`);

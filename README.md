@@ -52,6 +52,7 @@ steps:
   - uses: Widen/locize-diff@v1
     with:
       projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
+      apiKey: 4734080e-2860-40b4-9007-781ce07a571d
       projectSlug: maj9dez2
 ```
 
@@ -63,6 +64,7 @@ steps:
   - uses: Widen/locize-diff@v1
     with:
       projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
+      apiKey: 4734080e-2860-40b4-9007-781ce07a571d
       leftVersion: left
       rightVersion: right
 ```

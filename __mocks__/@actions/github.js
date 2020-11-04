@@ -1,32 +1,32 @@
 export const listFilesMock = jest.fn()
 export const createCommentMock = jest.fn()
+export const updateCommentMock = jest.fn()
 export const listCommentsMock = jest.fn()
 export const graphqlMock = jest.fn()
+
+const wrapResponse = () => async () => ({
+  data: listCommentsMock() ?? [],
+})
 
 export const getOctokit = () => ({
   graphql: graphqlMock,
   issues: {
     createComment: createCommentMock,
-    listComments: () => ({ data: listCommentsMock() ?? [] }),
+    listComments: wrapResponse(listCommentsMock),
+    updateComment: updateCommentMock,
   },
   pulls: {
-    listFiles: () => ({ data: listFilesMock() ?? [] }),
+    listFiles: wrapResponse(listFilesMock),
   },
 })
 
 export const context = {
-  action: 'mskeltontest-action',
-  actor: 'mskelton',
-  eventName: 'pull_request',
   payload: {
     pull_request: {},
   },
   issue: {
-    number: 1,
+    number: 123,
   },
-  ref: 'refs/pull/2/merge',
-  sha: 'ebb4992dc72451c1c6c99e1cce9d741ec0b5b7d7',
-  workflow: 'CI',
 }
 
 export const draftMock = jest.fn()

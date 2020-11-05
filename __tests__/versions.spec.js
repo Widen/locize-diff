@@ -10,7 +10,7 @@ import { mockFetchResource } from './utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
-  contextMock.mockReturnValue(pr())
+  contextMock.mockReturnValue(pr)
 })
 
 it.only('should allow customizing the left and right versions', async () => {

@@ -13,6 +13,6 @@ beforeEach(() => {
 
 it('should throw a not implemented error', async () => {
   await runAction()
-  expect(setFailed).toHaveBeenCalledWith('Not implemented')
+  expect(setFailed).toHaveBeenCalledWith('Not implemented yet')
   expect(createCommentMock).not.toHaveBeenCalled()
 })

@@ -11,6 +11,7 @@ beforeEach(() => {
   jest.resetAllMocks()
 
   contextMock.mockReturnValue({
+    eventName: 'pull_request',
     payload: { pull_request: { draft: true } },
     issue: { number: 123 },
   })

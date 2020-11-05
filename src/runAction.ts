@@ -9,7 +9,7 @@ export async function runAction() {
       await runCommand()
     }
 
-    const includeDrafts = getInput('includeDrafts') !== 'true'
+    const includeDrafts = getInput('includeDrafts') === 'true'
     if (includeDrafts || !context.payload.pull_request?.draft) {
       await runDiff()
     }

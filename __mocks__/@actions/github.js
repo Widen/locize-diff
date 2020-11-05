@@ -21,6 +21,7 @@ export const getOctokit = () => ({
 })
 
 export const pr = {
+  eventName: 'pull_request',
   payload: {
     pull_request: {
       draft: false,
@@ -31,16 +32,17 @@ export const pr = {
   },
 }
 
-export const issueComment = {
+export const prComment = {
+  eventName: 'issue_comment',
   issue: {
-    id: 444500041,
-    node_id: 'MDU6SXNzdWU0NDQ1MDAwNDE=',
-    number: 1,
+    number: 123,
   },
-  comment: {
-    id: 492700400,
-    node_id: 'MDEyOklzc3VlQ29tbWVudDQ5MjcwMDQwMA==',
-    body: "You are totally right! I'll get this fixed right away.",
+  payload: {
+    comment: {
+      id: 492700400,
+      node_id: 'MDEyOklzc3VlQ29tbWVudDQ5MjcwMDQwMA==',
+      body: '@locize diff',
+    },
   },
 }
 

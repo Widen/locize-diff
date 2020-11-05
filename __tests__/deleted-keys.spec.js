@@ -9,7 +9,7 @@ import { mockFetchResource, mockListResources } from './utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
-  contextMock.mockReturnValue(pr)
+  contextMock.mockReturnValue(pr())
 
   mockListResources((version) => [`projectId/${version}/en-US/translation`])
   mockFetchResource(

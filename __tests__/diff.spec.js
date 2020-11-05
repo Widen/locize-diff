@@ -17,7 +17,7 @@ import { mockListResources, mockFetchResource } from './utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
-  contextMock.mockReturnValue(pr)
+  contextMock.mockReturnValue(pr())
 })
 
 it('should add a comment when there are diffs', async () => {

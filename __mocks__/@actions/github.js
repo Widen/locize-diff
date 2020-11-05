@@ -20,19 +20,19 @@ export const getOctokit = () => ({
   },
 })
 
-export const pr = {
+export const pr = (draft = false) => ({
   eventName: 'pull_request',
   payload: {
     pull_request: {
-      draft: false,
+      draft,
     },
   },
   issue: {
     number: 123,
   },
-}
+})
 
-export const prComment = {
+export const prComment = (body) => ({
   eventName: 'issue_comment',
   issue: {
     number: 123,
@@ -41,10 +41,10 @@ export const prComment = {
     comment: {
       id: 492700400,
       node_id: 'MDEyOklzc3VlQ29tbWVudDQ5MjcwMDQwMA==',
-      body: '@locize diff',
+      body,
     },
   },
-}
+})
 
 export const contextMock = jest.fn()
 export const context = new Proxy(

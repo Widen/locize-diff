@@ -2,13 +2,13 @@ jest.mock('@actions/core')
 jest.mock('@actions/github')
 jest.mock('@actions/http-client')
 
-import { contextMock, createCommentMock, pr } from '@actions/github'
+import { contextMock, createCommentMock, prComment } from '@actions/github'
 import { runAction } from '../../src/runAction'
 import { mockFetchResource, mockListResources } from '../utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
-  contextMock.mockReturnValue(pr)
+  contextMock.mockReturnValue(prComment('@locize diff'))
 })
 
 it('should allow manually requesting a diff', async () => {

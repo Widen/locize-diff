@@ -6081,16 +6081,12 @@ var runAction_awaiter = (undefined && undefined.__awaiter) || function (thisArg,
 
 
 function runAction() {
-    var _a;
     return runAction_awaiter(this, void 0, void 0, function* () {
-        const includeDrafts = Object(core.getInput)('includeDrafts') === 'true';
         try {
             if (github.context.eventName === 'issue_comment') {
                 return runCommand();
             }
-            if (includeDrafts || !((_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.draft)) {
-                yield runDiff();
-            }
+            yield runDiff();
         }
         catch (err) {
             Object(core.setFailed)(err.message);

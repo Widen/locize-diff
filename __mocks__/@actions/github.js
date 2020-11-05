@@ -20,17 +20,12 @@ export const getOctokit = () => ({
   },
 })
 
-export const pr = (draft = false) => ({
+export const pr = {
   eventName: 'pull_request',
-  payload: {
-    pull_request: {
-      draft,
-    },
-  },
   issue: {
     number: 123,
   },
-})
+}
 
 export const prComment = (body) => ({
   eventName: 'issue_comment',

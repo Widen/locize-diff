@@ -1,7 +1,7 @@
 import { setFailed } from '@actions/core'
 import { context } from '@actions/github'
 import { runCommand } from './commands'
-import { runDiff } from './commands/diff'
+import { runDiff } from './commands/check'
 
 export async function runAction() {
   try {

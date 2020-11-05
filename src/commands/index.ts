@@ -1,7 +1,7 @@
 import { getInput } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
 import { runCopy } from './copy'
-import { runDiff, DiffResult } from './diff'
+import { runDiff, DiffResult } from './check'
 
 async function reportResult<T extends string>(
   result: T,

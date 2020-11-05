@@ -5,7 +5,14 @@ import { getComment, minimizeComment } from '../utils/comments'
 import { diffResources } from '../utils/diff'
 import { createMessage } from '../utils/message'
 
-export async function runDiff() {
+export type DiffResult =
+  | 'comment-created'
+  | 'comment-updated'
+  | 'comment-resolved'
+  | 'comment-unresolved'
+  | 'no-diffs'
+
+export async function runDiff(): Promise<DiffResult> {
   const projectId = getInput('projectId')
   const leftVersion = getInput('leftVersion')
   const rightVersion = getInput('rightVersion')
@@ -24,17 +31,24 @@ export async function runDiff() {
     }
 
     if (comment) {
+      console.log(comment)
+
       if (comment.body !== req.body) {
         await octokit.issues.updateComment({ ...req, comment_id: comment.id })
+        return 'comment-updated'
       }
     } else {
       await octokit.issues.createComment(req)
+      return 'comment-created'
     }
   }
 
   // If the comment exists and there are no longer any diffs, we minimize the
   // comment so it no longer shows in the GitHub UI.
-  if (comment && !diffs.length) {
+  if (comment) {
     await minimizeComment(comment.node_id)
+    return 'comment-resolved'
   }
+
+  return 'no-diffs'
 }

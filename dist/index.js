@@ -6031,39 +6031,71 @@ function runDiff() {
         if (diffs.length) {
             const req = Object.assign(Object.assign({}, github.context.repo), { body: createMessage(diffs), issue_number: github.context.issue.number });
             if (comment) {
+                console.log(comment);
                 if (comment.body !== req.body) {
                     yield octokit.issues.updateComment(Object.assign(Object.assign({}, req), { comment_id: comment.id }));
+                    return 'comment-updated';
                 }
             }
             else {
                 yield octokit.issues.createComment(req);
+                return 'comment-created';
             }
         }
         // If the comment exists and there are no longer any diffs, we minimize the
         // comment so it no longer shows in the GitHub UI.
-        if (comment && !diffs.length) {
+        if (comment) {
             yield minimizeComment(comment.node_id);
+            return 'comment-resolved';
         }
+        return 'no-diffs';
     });
 }
 
 // CONCATENATED MODULE: ./src/commands/index.ts
+var commands_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
+
+function reportResult(result, messages) {
+    return commands_awaiter(this, void 0, void 0, function* () {
+        const octokit = Object(github.getOctokit)(Object(core.getInput)('token'));
+        const body = messages[result];
+        yield octokit.issues.createComment(Object.assign(Object.assign({}, github.context.repo), { body, issue_number: github.context.issue.number }));
+    });
+}
 function runCommand() {
     var _a, _b;
-    const comment = (_b = (_a = github.context.payload.comment) === null || _a === void 0 ? void 0 : _a.body) !== null && _b !== void 0 ? _b : '';
-    const match = comment.match(/@locize-diff\s(check|copy)/);
-    // If the comment is invalid, there is nothing for us to do so we can exit early
-    if (!match)
-        return;
-    switch (match[1]) {
-        case 'check':
-            return runDiff();
-        case 'copy':
-            return runCopy();
-    }
+    return commands_awaiter(this, void 0, void 0, function* () {
+        console.log(github.context);
+        const comment = (_b = (_a = github.context.payload.comment) === null || _a === void 0 ? void 0 : _a.body) !== null && _b !== void 0 ? _b : '';
+        const match = comment.match(/@locize-diff\s(check|copy)/);
+        const command = match === null || match === void 0 ? void 0 : match[1];
+        switch (command) {
+            case 'check': {
+                const result = yield runDiff();
+                return reportResult(result, {
+                    'comment-created': '',
+                    'comment-resolved': '',
+                    'comment-unresolved': '',
+                    'comment-updated': '',
+                    'no-diffs': '',
+                });
+            }
+            case 'copy': {
+                return runCopy();
+            }
+        }
+    });
 }
 
 // CONCATENATED MODULE: ./src/runAction.ts

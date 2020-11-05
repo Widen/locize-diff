@@ -8,8 +8,7 @@ import { createMessage } from '../utils/message'
 export type DiffResult =
   | 'comment-created'
   | 'comment-updated'
-  | 'comment-resolved'
-  | 'comment-unresolved'
+  | 'comment-minimized'
   | 'no-diffs'
 
 export async function runDiff(): Promise<DiffResult> {
@@ -31,10 +30,9 @@ export async function runDiff(): Promise<DiffResult> {
     }
 
     if (comment) {
-      console.log(comment)
-
       if (comment.body !== req.body) {
         await octokit.issues.updateComment({ ...req, comment_id: comment.id })
+        // await unminimizeComment(comment.node_id)
         return 'comment-updated'
       }
     } else {
@@ -47,7 +45,7 @@ export async function runDiff(): Promise<DiffResult> {
   // comment so it no longer shows in the GitHub UI.
   if (comment) {
     await minimizeComment(comment.node_id)
-    return 'comment-resolved'
+    return 'comment-minimized'
   }
 
   return 'no-diffs'

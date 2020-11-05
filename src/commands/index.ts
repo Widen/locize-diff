@@ -32,9 +32,9 @@ export async function runCommand() {
 
       return reportResult<DiffResult>(result, {
         'comment-resolved':
-          "There appear to be some new diffs in Locize. I've unresolved and updated the old comment with the latest diffs.",
-        'comment-unresolved':
           'Looks like there are no longer any diffs, so I went ahead and resolved the outdated comment.',
+        'comment-unresolved':
+          "There appear to be some new diffs in Locize. I've unresolved and updated the old comment with the latest diffs.",
         'comment-updated':
           'I found some new diffs since the last time I checked. Take a look at the comment to see what changed.',
         'no-diffs':

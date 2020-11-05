@@ -5,10 +5,14 @@ import { runDiff, DiffResult } from './diff'
 
 async function reportResult<T extends string>(
   result: T,
-  messages: Record<T, string>
+  messages: Partial<Record<T, string>>
 ) {
+  // If we don't have a message defined for this specific result, we don't need
+  // to add a comment so we can exit early.
+  if (!messages[result]) return
+
   const octokit = getOctokit(getInput('token'))
-  const body = messages[result]
+  const body = `@${context.actor} ${messages[result]}`
 
   await octokit.issues.createComment({
     ...context.repo,
@@ -18,7 +22,6 @@ async function reportResult<T extends string>(
 }
 
 export async function runCommand() {
-  console.log(context)
   const comment = context.payload.comment?.body ?? ''
   const match = comment.match(/@locize-diff\s(check|copy)/)
   const command = match?.[1]
@@ -28,11 +31,14 @@ export async function runCommand() {
       const result = await runDiff()
 
       return reportResult<DiffResult>(result, {
-        'comment-created': '',
-        'comment-resolved': '',
-        'comment-unresolved': '',
-        'comment-updated': '',
-        'no-diffs': '',
+        'comment-resolved':
+          "There appear to be some new diffs in Locize. I've unresolved and updated the old comment with the latest diffs.",
+        'comment-unresolved':
+          'Looks like there are no longer any diffs, so I went ahead and resolved the outdated comment.',
+        'comment-updated':
+          'I found some new diffs since the last time I checked. Take a look at the comment to see what changed.',
+        'no-diffs':
+          "Good news! I didn't find any diffs so everything in Locize is up to date!",
       })
     }
 

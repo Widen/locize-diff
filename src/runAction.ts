@@ -6,10 +6,10 @@ import { runDiff } from './commands/diff'
 export async function runAction() {
   try {
     if (context.eventName === 'issue_comment') {
-      return runCommand()
+      await runCommand()
+    } else {
+      await runDiff()
     }
-
-    await runDiff()
   } catch (err) {
     setFailed(err.message)
   }

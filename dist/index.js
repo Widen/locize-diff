@@ -6068,15 +6068,18 @@ var commands_awaiter = (undefined && undefined.__awaiter) || function (thisArg, 
 
 function reportResult(result, messages) {
     return commands_awaiter(this, void 0, void 0, function* () {
+        // If we don't have a message defined for this specific result, we don't need
+        // to add a comment so we can exit early.
+        if (!messages[result])
+            return;
         const octokit = Object(github.getOctokit)(Object(core.getInput)('token'));
-        const body = messages[result];
+        const body = `@${github.context.actor} ${messages[result]}`;
         yield octokit.issues.createComment(Object.assign(Object.assign({}, github.context.repo), { body, issue_number: github.context.issue.number }));
     });
 }
 function runCommand() {
     var _a, _b;
     return commands_awaiter(this, void 0, void 0, function* () {
-        console.log(github.context);
         const comment = (_b = (_a = github.context.payload.comment) === null || _a === void 0 ? void 0 : _a.body) !== null && _b !== void 0 ? _b : '';
         const match = comment.match(/@locize-diff\s(check|copy)/);
         const command = match === null || match === void 0 ? void 0 : match[1];
@@ -6084,11 +6087,10 @@ function runCommand() {
             case 'check': {
                 const result = yield runDiff();
                 return reportResult(result, {
-                    'comment-created': '',
-                    'comment-resolved': '',
-                    'comment-unresolved': '',
-                    'comment-updated': '',
-                    'no-diffs': '',
+                    'comment-resolved': "There appear to be some new diffs in Locize. I've unresolved and updated the old comment with the latest diffs.",
+                    'comment-unresolved': 'Looks like there are no longer any diffs, so I went ahead and resolved the outdated comment.',
+                    'comment-updated': 'I found some new diffs since the last time I checked. Take a look at the comment to see what changed.',
+                    'no-diffs': "Good news! I didn't find any diffs so everything in Locize is up to date!",
                 });
             }
             case 'copy': {
@@ -6116,9 +6118,11 @@ function runAction() {
     return runAction_awaiter(this, void 0, void 0, function* () {
         try {
             if (github.context.eventName === 'issue_comment') {
-                return runCommand();
+                yield runCommand();
             }
-            yield runDiff();
+            else {
+                yield runDiff();
+            }
         }
         catch (err) {
             Object(core.setFailed)(err.message);

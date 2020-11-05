@@ -42,7 +42,7 @@ Basic:
 
 ```yml
 on:
-  pull_request: {}
+  pull_request:
   issue_comment:
     types: [created]
 name: Locize Diff
@@ -63,7 +63,7 @@ Custom versions:
 
 ```yml
 on:
-  pull_request: {}
+  pull_request:
   issue_comment:
     types: [created]
 name: Locize Diff
@@ -85,7 +85,7 @@ Ignore draft PRs:
 
 ```yml
 on:
-  pull_request: {}
+  pull_request:
   issue_comment:
     types: [created]
 name: Locize Diff

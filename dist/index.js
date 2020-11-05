@@ -6054,12 +6054,12 @@ function runDiff() {
 function runCommand() {
     var _a, _b;
     const comment = (_b = (_a = github.context.payload.comment) === null || _a === void 0 ? void 0 : _a.body) !== null && _b !== void 0 ? _b : '';
-    const match = comment.match(/@locize\s(diff|copy)/);
+    const match = comment.match(/@locize-diff\s(check|copy)/);
     // If the comment is invalid, there is nothing for us to do so we can exit early
     if (!match)
         return;
     switch (match[1]) {
-        case 'diff':
+        case 'check':
             return runDiff();
         case 'copy':
             return runCopy();

@@ -8,7 +8,7 @@ import { mockFetchResource, mockListResources } from '../utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
-  contextMock.mockReturnValue(prComment('@locize diff'))
+  contextMock.mockReturnValue(prComment('@locize-diff check'))
 })
 
 it('should allow manually requesting a diff', async () => {

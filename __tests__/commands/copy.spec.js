@@ -8,7 +8,7 @@ import { runAction } from '../../src/runAction'
 
 beforeEach(() => {
   jest.resetAllMocks()
-  contextMock.mockReturnValue(prComment('@locize copy'))
+  contextMock.mockReturnValue(prComment('@locize-diff copy'))
 })
 
 it('should throw a not implemented error', async () => {

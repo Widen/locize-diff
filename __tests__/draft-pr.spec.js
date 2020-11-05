@@ -3,14 +3,17 @@ jest.mock('@actions/github')
 jest.mock('@actions/http-client')
 
 import { mocks } from '@actions/core'
-import { createCommentMock, draftMock } from '@actions/github'
+import { contextMock, createCommentMock } from '@actions/github'
 import { runAction } from '../src/runAction'
 import { mockFetchResource, mockListResources } from './utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
 
-  draftMock.mockReturnValue(true)
+  contextMock.mockReturnValue({
+    payload: { pull_request: { draft: true } },
+    issue: { number: 123 },
+  })
   mockListResources((version) => [`projectId/${version}/en-US/translation`])
   mockFetchResource(
     { 'en-US/translation': { foo: 'bar' } },

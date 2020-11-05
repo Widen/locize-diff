@@ -8,6 +8,8 @@ import {
   listCommentsMock,
   updateCommentMock,
   graphqlMock,
+  contextMock,
+  pr,
 } from '@actions/github'
 import { createMessage } from '../src/message'
 import { runAction } from '../src/runAction'
@@ -15,6 +17,7 @@ import { mockListResources, mockFetchResource } from './utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
+  contextMock.mockReturnValue(pr)
 })
 
 it('should add a comment when there are diffs', async () => {

@@ -261,7 +261,6 @@ function listResources(projectId, version) {
 function collectResources(projectId, version) {
     return api_awaiter(this, void 0, void 0, function* () {
         const resources = yield listResources(projectId, version);
-        console.log(resources);
         const promises = resources.map((resource) => api_awaiter(this, void 0, void 0, function* () {
             const [language, namespace] = resource.url.split('/').slice(-2);
             const url = resource.url.replace(projectId, `pull/${projectId}`);
@@ -324,8 +323,6 @@ function getDiffs() {
         const rightVersion = Object(core.getInput)('rightVersion');
         const left = yield collectResources(projectId, leftVersion);
         const right = yield collectResources(projectId, rightVersion);
-        console.log(left);
-        console.log(right);
         return diffResources(left, right);
     });
 }
@@ -400,6 +397,10 @@ function runCopy() {
         const diffs = yield getDiffs();
         const comment = yield getComment();
         if (!diffs.length) {
+            // If the comment exists, minimize it now that there are no diffs.
+            if (comment) {
+                yield runGraphql(minimizeComment, comment.node_id);
+            }
             return `I'd like to help, but I didn't find any diffs in Locize to copy. Did you already copy your changes?`;
         }
         if (!comment) {

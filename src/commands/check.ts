@@ -1,13 +1,10 @@
-import { getInput } from '@actions/core'
-import { context, getOctokit } from '@actions/github'
 import {
   createComment,
   getComment,
   minimizeComment,
   runGraphql,
-  unminimizeComment,
 } from '../utils/comments'
-import { getDiffs } from '../utils/diff'
+import { getDiffs, updateDiffComment } from '../utils/diff'
 import { createMessage } from '../utils/message'
 
 const messages = {
@@ -20,7 +17,6 @@ const messages = {
 }
 
 export async function runDiff() {
-  const octokit = getOctokit(getInput('token'))
   const diffs = await getDiffs()
   const comment = await getComment()
 
@@ -29,14 +25,7 @@ export async function runDiff() {
 
     if (comment) {
       if (comment.body !== body) {
-        await runGraphql(unminimizeComment, comment.node_id)
-        await octokit.issues.updateComment({
-          ...context.repo,
-          body,
-          issue_number: context.issue.number,
-          comment_id: comment.id,
-        })
-
+        await updateDiffComment(comment, body)
         return messages.commentUpdated
       }
     } else {

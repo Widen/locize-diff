@@ -24,7 +24,7 @@ function createDiffMessage(diff: ResourceDiff) {
 ${rows}`
 }
 
-export function createMessage(diffs: ResourceDiff[], prelude: string) {
+export function createMessage(diffs: ResourceDiff[], prelude?: string) {
   const projectSlug = getInput('projectSlug')
   const link = projectSlug
     ? ` [Click here](https://locize.app/p/${projectSlug}/settings) to go to your project settings to publish your changes.`

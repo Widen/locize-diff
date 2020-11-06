@@ -272,6 +272,14 @@ function collectResources(projectId, version) {
         return Promise.all(promises);
     });
 }
+function copyVersion() {
+    return api_awaiter(this, void 0, void 0, function* () {
+        const projectId = Object(core.getInput)('projectId');
+        const fromVersion = Object(core.getInput)('leftVersion');
+        const toVersion = Object(core.getInput)('rightVersion');
+        yield client.post(`https://api.locize.app/copy/${projectId}/version/${fromVersion}/${toVersion}`, '');
+    });
+}
 
 // CONCATENATED MODULE: ./src/utils/diff.ts
 var diff_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -392,6 +400,8 @@ var copy_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arg
 
 
 
+
+
 function runCopy() {
     return copy_awaiter(this, void 0, void 0, function* () {
         const diffs = yield getDiffs();
@@ -412,7 +422,13 @@ function runCopy() {
             yield updateDiffComment(comment, body);
             return 'Looks like the diffs have changed since you lasted checked. Please review the diffs and then run `@locize-diff copy` again.';
         }
-        throw new Error('copy not implemented');
+        // Copy the changes in Locize
+        yield copyVersion();
+        // If the copy succeeds, we can minimize the comment since it is now outdated.
+        yield runGraphql(minimizeComment, comment.node_id);
+        const leftVersion = Object(core.getInput)('leftVersion');
+        const rightVersion = Object(core.getInput)('rightVersion');
+        return `Congratulations! Your changes have been successfully copied from ${leftVersion} to ${rightVersion}.`;
     });
 }
 

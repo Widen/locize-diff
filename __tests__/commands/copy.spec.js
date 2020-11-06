@@ -65,3 +65,17 @@ it('should not copy any changes if there are no diffs', async () => {
     `"@somebody I'd like to help, but I didn't find any diffs in Locize to copy. Did you already copy your changes?"`
   )
 })
+
+it('should copy changes if the diffs match', async () => {
+  listCommentsMock.mockReturnValue([{ body: sampleComment }])
+  mockFetchResource(
+    { 'en-US/translation': { foo: 'bar' } },
+    { 'en-US/translation': { foo: 'baz' } }
+  )
+
+  await runAction()
+  expect(putMock).toHaveBeenCalled()
+  expect(createCommentMock).toHaveBeenCalledTimes(1)
+  expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
+  expect(createCommentMock.mock.calls[0][0].body).toMatchInlineSnapshot()
+})

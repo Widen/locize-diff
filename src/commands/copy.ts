@@ -26,4 +26,6 @@ export async function runCopy() {
     await updateDiffComment(comment, body)
     return 'Looks like the diffs have changed since you lasted checked. Please review the diffs and then run `@locize-diff copy` again.'
   }
+
+  throw new Error('copy not implemented')
 }

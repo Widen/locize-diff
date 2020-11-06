@@ -52,6 +52,12 @@ export async function updateTranslations(
   const projectId = getInput('projectId')
   const version = getInput('rightVersion')
 
+  console.log(
+    'Updating',
+    `https://api.locize.app/update/${projectId}/${version}/${key}`,
+    updates
+  )
+
   await client.post(
     `https://api.locize.app/update/${projectId}/${version}/${key}`,
     JSON.stringify(updates)

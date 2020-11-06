@@ -276,6 +276,7 @@ function updateTranslations(key, updates) {
     return api_awaiter(this, void 0, void 0, function* () {
         const projectId = Object(core.getInput)('projectId');
         const version = Object(core.getInput)('rightVersion');
+        console.log('Updating', `https://api.locize.app/update/${projectId}/${version}/${key}`, updates);
         yield client.post(`https://api.locize.app/update/${projectId}/${version}/${key}`, JSON.stringify(updates));
     });
 }

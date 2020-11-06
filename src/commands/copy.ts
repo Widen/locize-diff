@@ -1,4 +1,6 @@
+import { getInput } from '@actions/core'
 import { context } from '@actions/github'
+import { copyVersion } from '../api'
 import { getComment, minimizeComment, runGraphql } from '../utils/comments'
 import { getDiffs, updateDiffComment } from '../utils/diff'
 import { createMessage } from '../utils/message'
@@ -32,5 +34,14 @@ export async function runCopy() {
     return 'Looks like the diffs have changed since you lasted checked. Please review the diffs and then run `@locize-diff copy` again.'
   }
 
-  throw new Error('copy not implemented')
+  // Copy the changes in Locize
+  await copyVersion()
+
+  // If the copy succeeds, we can minimize the comment since it is now outdated.
+  await runGraphql(minimizeComment, comment.node_id)
+
+  const leftVersion = getInput('leftVersion')
+  const rightVersion = getInput('rightVersion')
+
+  return `Congratulations! Your changes have been successfully copied from ${leftVersion} to ${rightVersion}.`
 }

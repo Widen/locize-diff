@@ -44,3 +44,14 @@ export async function collectResources(
 
   return Promise.all(promises)
 }
+
+export async function copyVersion() {
+  const projectId = getInput('projectId')
+  const fromVersion = getInput('leftVersion')
+  const toVersion = getInput('rightVersion')
+
+  await client.post(
+    `https://api.locize.app/copy/${projectId}/version/${fromVersion}/${toVersion}`,
+    ''
+  )
+}

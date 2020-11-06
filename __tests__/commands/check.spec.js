@@ -5,13 +5,12 @@ jest.mock('@actions/http-client')
 import {
   contextMock,
   createCommentMock,
-  prComment,
   graphqlMock,
   listCommentsMock,
+  prComment,
   updateCommentMock,
 } from '@actions/github'
 import { runAction } from '../../src/runAction'
-import { createMessage } from '../../src/utils/message'
 import { mockFetchResource, mockListResources, sampleComment } from '../utils'
 
 beforeEach(() => {

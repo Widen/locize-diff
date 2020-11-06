@@ -2,6 +2,7 @@ jest.mock('@actions/core')
 jest.mock('@actions/github')
 jest.mock('@actions/http-client')
 
+import { mocks } from '@actions/core'
 import {
   contextMock,
   createCommentMock,
@@ -10,8 +11,9 @@ import {
   prComment,
   updateCommentMock,
 } from '@actions/github'
-import { putMock } from '@actions/http-client'
+import { postMock } from '@actions/http-client'
 import { runAction } from '../../src/runAction'
+import { createMessage } from '../../src/utils/message'
 import { mockFetchResource, mockListResources, sampleComment } from '../utils'
 
 beforeEach(() => {
@@ -27,7 +29,7 @@ it("should display the diff without copying if the user hasn't run the diff yet"
   )
 
   await runAction()
-  expect(putMock).not.toHaveBeenCalled()
+  expect(postMock).not.toHaveBeenCalled()
   expect(createCommentMock).toHaveBeenCalledTimes(1)
   expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
   expect(createCommentMock.mock.calls[0][0].body).toMatchSnapshot()
@@ -41,7 +43,7 @@ it('should not copy the diffs if they have changed since the last comment', asyn
   )
 
   await runAction()
-  expect(putMock).not.toHaveBeenCalled()
+  expect(postMock).not.toHaveBeenCalled()
   expect(updateCommentMock).toHaveBeenCalledTimes(1)
   expect(updateCommentMock.mock.calls[0][0].issue_number).toBe(123)
   expect(updateCommentMock.mock.calls[0][0].body).toMatchSnapshot()
@@ -59,7 +61,7 @@ it('should not copy any changes if there are no diffs', async () => {
   )
 
   await runAction()
-  expect(putMock).not.toHaveBeenCalled()
+  expect(postMock).not.toHaveBeenCalled()
   expect(createCommentMock).toHaveBeenCalledTimes(1)
   expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
   expect(createCommentMock.mock.calls[0][0].body).toMatchInlineSnapshot(
@@ -75,7 +77,7 @@ it('should minimize the comment if there are no longer any diffs', async () => {
   )
 
   await runAction()
-  expect(putMock).not.toHaveBeenCalled()
+  expect(postMock).not.toHaveBeenCalled()
   expect(graphqlMock).toHaveBeenCalledWith(expect.anything(), { subjectId: 1 })
   expect(createCommentMock).toHaveBeenCalledTimes(1)
   expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
@@ -84,16 +86,36 @@ it('should minimize the comment if there are no longer any diffs', async () => {
   )
 })
 
-it.skip('should copy changes if the diffs match', async () => {
-  listCommentsMock.mockReturnValue([{ body: sampleComment }])
+it.only('should copy changes if the diffs match', async () => {
+  mocks.projectId.mockReturnValue('project-a')
+  mocks.leftVersion.mockReturnValue('one')
+  mocks.rightVersion.mockReturnValue('two')
+
+  listCommentsMock.mockReturnValue([
+    {
+      body: createMessage([
+        {
+          diffs: { foo: { left: 'bar', right: 'baz' } },
+          key: 'en-US/translation',
+        },
+      ]),
+    },
+  ])
+
+  mockListResources((version) => [`project-a/${version}/en-US/translation`])
   mockFetchResource(
     { 'en-US/translation': { foo: 'bar' } },
     { 'en-US/translation': { foo: 'baz' } }
   )
 
   await runAction()
-  expect(putMock).toHaveBeenCalled()
   expect(createCommentMock).toHaveBeenCalledTimes(1)
   expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
-  expect(createCommentMock.mock.calls[0][0].body).toMatchInlineSnapshot()
+  expect(createCommentMock.mock.calls[0][0].body).toMatchInlineSnapshot(
+    `"@somebody Congratulations! Your changes have been successfully copied from one to two."`
+  )
+  expect(postMock).toHaveBeenCalledWith(
+    'https://api.locize.app/copy/project-a/version/one/two',
+    ''
+  )
 })

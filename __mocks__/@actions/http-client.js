@@ -1,6 +1,6 @@
 export const listResourcesMock = jest.fn()
 export const fetchResourceMock = jest.fn()
-export const putMock = jest.fn()
+export const postMock = jest.fn()
 
 export class HttpClient {
   async get(url) {
@@ -17,5 +17,5 @@ export class HttpClient {
     }
   }
 
-  put = putMock
+  post = postMock
 }

@@ -1,48 +1,47 @@
 import { getInput } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
-import { collectResources } from '../api'
 import {
+  createComment,
   getComment,
   minimizeComment,
   runGraphql,
   unminimizeComment,
 } from '../utils/comments'
-import { diffResources } from '../utils/diff'
+import { getDiffs } from '../utils/diff'
 import { createMessage } from '../utils/message'
 
-export type DiffResult =
-  | 'comment-created'
-  | 'comment-updated'
-  | 'comment-minimized'
-  | 'no-diffs'
+const messages = {
+  commentMinimized:
+    'Looks like there are no longer any diffs, so I went ahead and resolved the outdated comment.',
+  commentUpdated:
+    'I found some new diffs since the last time I checked. Take a look at the comment to see what changed.',
+  noDiffs:
+    "Good news! I didn't find any diffs so everything in Locize is up to date!",
+}
 
-export async function runDiff(): Promise<DiffResult> {
-  const projectId = getInput('projectId')
-  const leftVersion = getInput('leftVersion')
-  const rightVersion = getInput('rightVersion')
-
+export async function runDiff() {
   const octokit = getOctokit(getInput('token'))
-  const left = await collectResources(projectId, leftVersion)
-  const right = await collectResources(projectId, rightVersion)
-  const diffs = diffResources(left, right)
+  const diffs = await getDiffs()
   const comment = await getComment()
 
   if (diffs.length) {
-    const req = {
-      ...context.repo,
-      body: createMessage(diffs),
-      issue_number: context.issue.number,
-    }
+    const body = createMessage(diffs)
 
     if (comment) {
-      if (comment.body !== req.body) {
-        await octokit.issues.updateComment({ ...req, comment_id: comment.id })
+      if (comment.body !== body) {
         await runGraphql(unminimizeComment, comment.node_id)
-        return 'comment-updated'
+        await octokit.issues.updateComment({
+          ...context.repo,
+          body,
+          issue_number: context.issue.number,
+          comment_id: comment.id,
+        })
+
+        return messages.commentUpdated
       }
     } else {
-      await octokit.issues.createComment(req)
-      return 'comment-created'
+      await createComment(body)
+      return
     }
   }
 
@@ -50,8 +49,8 @@ export async function runDiff(): Promise<DiffResult> {
   // comment so it no longer shows in the GitHub UI.
   if (comment) {
     await runGraphql(minimizeComment, comment.node_id)
-    return 'comment-minimized'
+    return messages.commentMinimized
   }
 
-  return 'no-diffs'
+  return messages.noDiffs
 }

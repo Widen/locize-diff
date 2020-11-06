@@ -1,4 +1,6 @@
 import { getInput } from '@actions/core'
+import { getOctokit } from '@actions/github'
+import { collectResources } from '../api'
 import { ResourceCollection, ResourceDiff } from './types'
 
 function getKeys(left: ResourceCollection, right: ResourceCollection) {
@@ -31,7 +33,7 @@ function diffCollection(
   return { key: left.key, diffs }
 }
 
-export function diffResources(
+function diffResources(
   left: ResourceCollection[],
   right: ResourceCollection[]
 ): ResourceDiff[] {
@@ -41,4 +43,14 @@ export function diffResources(
       diffCollection(leftItem, right.find((item) => leftItem.key === item.key)!)
     )
     .filter((diff) => Object.keys(diff.diffs).length)
+}
+
+export async function getDiffs() {
+  const projectId = getInput('projectId')
+  const leftVersion = getInput('leftVersion')
+  const rightVersion = getInput('rightVersion')
+
+  const left = await collectResources(projectId, leftVersion)
+  const right = await collectResources(projectId, rightVersion)
+  return diffResources(left, right)
 }

@@ -56,6 +56,8 @@ export async function getDiffs() {
 
   const left = await collectResources(projectId, leftVersion)
   const right = await collectResources(projectId, rightVersion)
+  console.log(left)
+  console.log(right)
   return diffResources(left, right)
 }
 

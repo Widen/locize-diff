@@ -86,7 +86,7 @@ it('should minimize the comment if there are no longer any diffs', async () => {
   )
 })
 
-it.only('should copy changes if the diffs match', async () => {
+it('should copy changes if the diffs match', async () => {
   mocks.projectId.mockReturnValue('project-a')
   mocks.leftVersion.mockReturnValue('one')
   mocks.rightVersion.mockReturnValue('two')

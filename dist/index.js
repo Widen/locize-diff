@@ -272,12 +272,11 @@ function collectResources(projectId, version) {
         return Promise.all(promises);
     });
 }
-function copyVersion() {
+function updateTranslations(key, updates) {
     return api_awaiter(this, void 0, void 0, function* () {
         const projectId = Object(core.getInput)('projectId');
-        const fromVersion = Object(core.getInput)('leftVersion');
-        const toVersion = Object(core.getInput)('rightVersion');
-        yield client.post(`https://api.locize.app/copy/${projectId}/version/${fromVersion}/${toVersion}`, '');
+        const version = Object(core.getInput)('rightVersion');
+        yield client.post(`https://api.locize.app/update/${projectId}/${version}/${key}`, JSON.stringify(updates));
     });
 }
 
@@ -402,6 +401,24 @@ var copy_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arg
 
 
 
+function copyDiffs(diffs) {
+    return copy_awaiter(this, void 0, void 0, function* () {
+        const promises = diffs.map((diff) => {
+            // Convert the diffs to an object containing the translation keys and their
+            // new values.
+            const updates = Object.entries(diff.diffs).reduce((acc, [key, value]) => {
+                var _a;
+                // If `ignoreDeletedKeys` is set to false, the left side of the diff could
+                // be undefined so we need to set it's value to null to delete it from
+                // the right version in Locize.
+                acc[key] = (_a = value.left) !== null && _a !== void 0 ? _a : null;
+                return acc;
+            }, {});
+            return updateTranslations(diff.key, updates);
+        });
+        yield Promise.all(promises);
+    });
+}
 function runCopy() {
     return copy_awaiter(this, void 0, void 0, function* () {
         const diffs = yield getDiffs();
@@ -422,8 +439,8 @@ function runCopy() {
             yield updateDiffComment(comment, body);
             return 'Looks like the diffs have changed since you lasted checked. Please review the diffs and then run `@locize-diff copy` again.';
         }
-        // Copy the changes in Locize
-        yield copyVersion();
+        // Copy the changes to locize
+        yield copyDiffs(diffs);
         // If the copy succeeds, we can minimize the comment since it is now outdated.
         yield runGraphql(minimizeComment, comment.node_id);
         const leftVersion = Object(core.getInput)('leftVersion');

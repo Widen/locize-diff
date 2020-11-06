@@ -1,5 +1,5 @@
 import { context } from '@actions/github'
-import { getComment } from '../utils/comments'
+import { getComment, minimizeComment, runGraphql } from '../utils/comments'
 import { getDiffs, updateDiffComment } from '../utils/diff'
 import { createMessage } from '../utils/message'
 
@@ -8,6 +8,11 @@ export async function runCopy() {
   const comment = await getComment()
 
   if (!diffs.length) {
+    // If the comment exists, minimize it now that there are no diffs.
+    if (comment) {
+      await runGraphql(minimizeComment, comment.node_id)
+    }
+
     return `I'd like to help, but I didn't find any diffs in Locize to copy. Did you already copy your changes?`
   }
 

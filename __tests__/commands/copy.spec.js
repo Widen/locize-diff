@@ -5,9 +5,10 @@ jest.mock('@actions/http-client')
 import {
   contextMock,
   createCommentMock,
-  updateCommentMock,
+  graphqlMock,
   listCommentsMock,
   prComment,
+  updateCommentMock,
 } from '@actions/github'
 import { putMock } from '@actions/http-client'
 import { runAction } from '../../src/runAction'
@@ -66,7 +67,24 @@ it('should not copy any changes if there are no diffs', async () => {
   )
 })
 
-it('should copy changes if the diffs match', async () => {
+it('should minimize the comment if there are no longer any diffs', async () => {
+  listCommentsMock.mockReturnValue([{ body: sampleComment, node_id: 1 }])
+  mockFetchResource(
+    { 'en-US/translation': { foo: 'bar' } },
+    { 'en-US/translation': { foo: 'bar' } }
+  )
+
+  await runAction()
+  expect(putMock).not.toHaveBeenCalled()
+  expect(graphqlMock).toHaveBeenCalledWith(expect.anything(), { subjectId: 1 })
+  expect(createCommentMock).toHaveBeenCalledTimes(1)
+  expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
+  expect(createCommentMock.mock.calls[0][0].body).toMatchInlineSnapshot(
+    `"@somebody I'd like to help, but I didn't find any diffs in Locize to copy. Did you already copy your changes?"`
+  )
+})
+
+it.skip('should copy changes if the diffs match', async () => {
   listCommentsMock.mockReturnValue([{ body: sampleComment }])
   mockFetchResource(
     { 'en-US/translation': { foo: 'bar' } },

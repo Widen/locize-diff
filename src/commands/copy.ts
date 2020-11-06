@@ -1,9 +1,28 @@
 import { getInput } from '@actions/core'
 import { context } from '@actions/github'
-import { copyVersion } from '../api'
+import { updateTranslations } from '../api'
 import { getComment, minimizeComment, runGraphql } from '../utils/comments'
 import { getDiffs, updateDiffComment } from '../utils/diff'
 import { createMessage } from '../utils/message'
+import { ResourceDiff } from '../utils/types'
+
+async function copyDiffs(diffs: ResourceDiff[]) {
+  const promises = diffs.map((diff) => {
+    // Convert the diffs to an object containing the translation keys and their
+    // new values.
+    const updates = Object.entries(diff.diffs).reduce((acc, [key, value]) => {
+      // If `ignoreDeletedKeys` is set to false, the left side of the diff could
+      // be undefined so we need to set it's value to null to delete it from
+      // the right version in Locize.
+      acc[key] = value.left ?? null
+      return acc
+    }, {} as Record<string, string | null>)
+
+    return updateTranslations(diff.key, updates)
+  })
+
+  await Promise.all(promises)
+}
 
 export async function runCopy() {
   const diffs = await getDiffs()
@@ -34,8 +53,8 @@ export async function runCopy() {
     return 'Looks like the diffs have changed since you lasted checked. Please review the diffs and then run `@locize-diff copy` again.'
   }
 
-  // Copy the changes in Locize
-  await copyVersion()
+  // Copy the changes to locize
+  await copyDiffs(diffs)
 
   // If the copy succeeds, we can minimize the comment since it is now outdated.
   await runGraphql(minimizeComment, comment.node_id)

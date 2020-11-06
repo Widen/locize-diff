@@ -104,8 +104,8 @@ it.only('should copy changes if the diffs match', async () => {
 
   mockListResources((version) => [`project-a/${version}/en-US/translation`])
   mockFetchResource(
-    { 'en-US/translation': { foo: 'bar' } },
-    { 'en-US/translation': { foo: 'baz' } }
+    { 'en-US/translation': { foo: 'bar', hi: 'ho' } },
+    { 'en-US/translation': { foo: 'baz', hi: 'ho' } }
   )
 
   await runAction()
@@ -115,7 +115,7 @@ it.only('should copy changes if the diffs match', async () => {
     `"@somebody Congratulations! Your changes have been successfully copied from one to two."`
   )
   expect(postMock).toHaveBeenCalledWith(
-    'https://api.locize.app/copy/project-a/version/one/two',
-    ''
+    'https://api.locize.app/update/project-a/two/en-US/translation',
+    JSON.stringify({ foo: 'bar' })
   )
 })
